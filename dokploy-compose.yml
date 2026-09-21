@@ -506,6 +506,18 @@ services:
             type: local
             local:
               publishDirectory: /tmp/techdocs-publish
+        search:
+          collators:
+            catalog:
+              schedule:
+                frequency: { minutes: 10 }
+                timeout: { minutes: 5 }
+                initialDelay: { seconds: 5 }
+            techdocs:
+              schedule:
+                frequency: { minutes: 10 }
+                timeout: { minutes: 5 }
+                initialDelay: { seconds: 15 }
         permission:
           enabled: false
         YAMLEOF
