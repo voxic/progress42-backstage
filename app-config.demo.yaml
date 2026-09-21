@@ -1,0 +1,53 @@
+app:
+  title: Progress42 Backstage
+  baseUrl: https://backstage.progress42.com
+
+organization:
+  name: Progress42
+
+backend:
+  baseUrl: https://backstage.progress42.com
+  listen:
+    port: 7007
+    host: 0.0.0.0
+  cors:
+    origin: https://backstage.progress42.com
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  database:
+    client: pg
+    connection:
+      host: ${POSTGRES_HOST}
+      port: ${POSTGRES_PORT}
+      user: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      database: ${POSTGRES_DB}
+
+auth:
+  providers:
+    guest:
+      dangerouslyAllowOutsideDevelopment: true
+
+catalog:
+  rules:
+    - allow: [Component, System, API, Resource, Location, User, Group, Domain]
+  locations:
+    - type: url
+      target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/org.yaml
+      rules:
+        - allow: [User, Group]
+    - type: url
+      target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/system.yaml
+      rules:
+        - allow: [System]
+    - type: url
+      target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/components.yaml
+      rules:
+        - allow: [Component]
+    - type: url
+      target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/apis.yaml
+      rules:
+        - allow: [API]
+
+permission:
+  enabled: false

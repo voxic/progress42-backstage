@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: retail-platform
+  description: Retail / commerce platform for the IKEA workshop demo
+  tags:
+    - retail
+    - commerce
+    - demo
+  links:
+    - url: https://backstage.progress42.com
+      title: Backstage Demo
+      icon: catalog
+spec:
+  owner: group:default/commerce-team
+  domain: default/commerce
