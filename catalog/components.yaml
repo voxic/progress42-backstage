@@ -8,8 +8,8 @@ metadata:
     https://www.flylo-air.com/. Presents the airline brand (“the quiet way to
     fly”), route network, cabin products (Atlas / Prospect / Linen), and deep
     links into the booking experience on book.flylo-air.com. Primary demo
-    surface for the Malmö IKEA workshop — Next.js-style marketing site owned
-    by FlyLo Platform.
+    surface for the Malmö IKEA workshop — TypeScript Next.js app in
+    github.com/voxic/flylo-web, owned by FlyLo Platform.
   tags:
     - frontend
     - website
@@ -18,11 +18,11 @@ metadata:
     - flylo
     - demo
   annotations:
-    github.com/project-slug: flylo-air/web
-    backstage.io/source-location: url:https://github.com/flylo-air/web/
-    backstage.io/view-url: https://github.com/flylo-air/web
-    backstage.io/edit-url: https://github.com/flylo-air/web/edit/main/README.md
-    backstage.io/techdocs-ref: url:https://github.com/flylo-air/web/tree/main
+    github.com/project-slug: voxic/flylo-web
+    backstage.io/source-location: url:https://github.com/voxic/flylo-web/
+    backstage.io/view-url: https://github.com/voxic/flylo-web
+    backstage.io/edit-url: https://github.com/voxic/flylo-web/edit/main/README.md
+    backstage.io/techdocs-ref: url:https://github.com/voxic/flylo-web/tree/main
   links:
     - url: https://www.flylo-air.com/
       title: Live website
@@ -30,10 +30,10 @@ metadata:
     - url: https://book.flylo-air.com/
       title: Book flights
       icon: catalog
-    - url: https://github.com/flylo-air/web
+    - url: https://github.com/voxic/flylo-web
       title: GitHub repo
       icon: github
-    - url: https://github.com/flylo-air/web/blob/main/README.md
+    - url: https://github.com/voxic/flylo-web/blob/main/README.md
       title: README / docs
       icon: docs
     - url: https://www.flylo-air.com/#network
