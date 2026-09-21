@@ -3,26 +3,42 @@ kind: Group
 metadata:
   name: platform
   namespace: flylo
-  description: FlyLo Air platform engineering (demo)
+  description: >
+    FlyLo Air platform engineering — owns the public web, booking frontend/backend,
+    and shared platform APIs for the airline demo.
+  links:
+    - url: https://www.flylo-air.com/
+      title: FlyLo Air
+      icon: catalog
 spec:
   type: team
   profile:
     displayName: FlyLo Platform
     email: platform@flylo-air.example
   children: []
+  members:
+    - user:default/guest
+    - user:default/emil
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: ops
   namespace: flylo
-  description: FlyLo Air operations (demo)
+  description: >
+    FlyLo Air operations — crew app, Odoo ops, Chatwoot support, and insights BI.
+  links:
+    - url: https://ops.flylo-air.com/
+      title: Ops
+      icon: catalog
 spec:
   type: team
   profile:
     displayName: FlyLo Ops
     email: ops@flylo-air.example
   children: []
+  members:
+    - user:default/emil
 ---
 apiVersion: backstage.io/v1alpha1
 kind: User

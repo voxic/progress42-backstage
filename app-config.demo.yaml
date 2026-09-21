@@ -40,6 +40,10 @@ catalog:
       rules:
         - allow: [System]
     - type: url
+      target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/apis.yaml
+      rules:
+        - allow: [API]
+    - type: url
       target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/components.yaml
       rules:
         - allow: [Component]

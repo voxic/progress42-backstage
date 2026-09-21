@@ -19,26 +19,42 @@ services:
         metadata:
           name: platform
           namespace: flylo
-          description: FlyLo Air platform engineering (demo)
+          description: >
+            FlyLo Air platform engineering — owns the public web, booking frontend/backend,
+            and shared platform APIs for the airline demo.
+          links:
+            - url: https://www.flylo-air.com/
+              title: FlyLo Air
+              icon: catalog
         spec:
           type: team
           profile:
             displayName: FlyLo Platform
             email: platform@flylo-air.example
           children: []
+          members:
+            - user:default/guest
+            - user:default/emil
         ---
         apiVersion: backstage.io/v1alpha1
         kind: Group
         metadata:
           name: ops
           namespace: flylo
-          description: FlyLo Air operations (demo)
+          description: >
+            FlyLo Air operations — crew app, Odoo ops, Chatwoot support, and insights BI.
+          links:
+            - url: https://ops.flylo-air.com/
+              title: Ops
+              icon: catalog
         spec:
           type: team
           profile:
             displayName: FlyLo Ops
             email: ops@flylo-air.example
           children: []
+          members:
+            - user:default/emil
         ---
         apiVersion: backstage.io/v1alpha1
         kind: User
@@ -65,61 +81,165 @@ services:
         kind: System
         metadata:
           name: flylo-air
-          description: FlyLo Air airline digital platform (IKEA workshop demo)
+          title: FlyLo Air
+          description: >
+            FlyLo Air airline digital platform — San Francisco–based carrier bridging
+            the Pacific and Atlantic from hubs at SFO and LHR. This system covers the
+            public marketing site, booking stack, crew tooling, ops (Odoo), support
+            (Chatwoot), and insights BI used in the Progress42 IKEA workshop demo.
           tags:
             - airline
             - flylo
             - demo
+            - ikea-workshop
           links:
             - url: https://www.flylo-air.com/
-              title: FlyLo Air website
+              title: Website — www.flylo-air.com
+              icon: catalog
+            - url: https://book.flylo-air.com/
+              title: Book flights
               icon: catalog
             - url: https://backstage.progress42.com
               title: Backstage Demo
               icon: catalog
+            - url: https://github.com/flylo-air
+              title: GitHub org
+              icon: github
         spec:
           owner: group:flylo/platform
+        CATEOF
+        cat > /tmp/catalog/apis.yaml <<'CATEOF'
+        apiVersion: backstage.io/v1alpha1
+        kind: API
+        metadata:
+          name: booking-api
+          description: >
+            Public booking and inventory API used by the FlyLo marketing site and
+            book.flylo-air.com. Covers flight search, fare quotes, hold/confirm,
+            and passenger record retrieval for the airline demo.
+          tags:
+            - booking
+            - api
+            - openapi
+            - flylo
+          annotations:
+            github.com/project-slug: flylo-air/booking-backend
+            backstage.io/source-location: url:https://github.com/flylo-air/booking-backend
+            backstage.io/view-url: https://github.com/flylo-air/booking-backend
+          links:
+            - url: https://book.flylo-air.com/
+              title: Booking site
+              icon: catalog
+            - url: https://github.com/flylo-air/booking-backend
+              title: Source
+              icon: github
+            - url: https://www.flylo-air.com/
+              title: Marketing site
+              icon: catalog
+        spec:
+          type: openapi
+          lifecycle: production
+          owner: group:flylo/platform
+          system: system:default/flylo-air
+          definition: |
+            openapi: "3.0.3"
+            info:
+              title: FlyLo Booking API
+              version: "1.0.0"
+              description: Demo OpenAPI stub for FlyLo Air booking (IKEA workshop).
+            paths:
+              /v1/flights/search:
+                get:
+                  summary: Search flights
+                  parameters:
+                    - name: from
+                      in: query
+                      schema: { type: string }
+                    - name: to
+                      in: query
+                      schema: { type: string }
+                    - name: date
+                      in: query
+                      schema: { type: string, format: date }
+                  responses:
+                    "200":
+                      description: Flight search results
+              /v1/bookings:
+                post:
+                  summary: Create booking hold
+                  responses:
+                    "201":
+                      description: Booking held
         CATEOF
         cat > /tmp/catalog/components.yaml <<'CATEOF'
         apiVersion: backstage.io/v1alpha1
         kind: Component
         metadata:
           name: web
-          description: FlyLo Air public website
+          title: FlyLo Web
+          description: >
+            Public marketing and booking-entry website for FlyLo Air at
+            https://www.flylo-air.com/. Presents the airline brand (“the quiet way to
+            fly”), route network, cabin products (Atlas / Prospect / Linen), and deep
+            links into the booking experience on book.flylo-air.com. Primary demo
+            surface for the Malmö IKEA workshop — Next.js-style marketing site owned
+            by FlyLo Platform.
           tags:
             - frontend
             - website
+            - marketing
+            - nextjs
             - flylo
+            - demo
           annotations:
             github.com/project-slug: flylo-air/web
-            backstage.io/source-location: url:https://github.com/flylo-air/web
+            backstage.io/source-location: url:https://github.com/flylo-air/web/
             backstage.io/view-url: https://github.com/flylo-air/web
-            backstage.io/edit-url: https://github.com/flylo-air/web/edit/main
+            backstage.io/edit-url: https://github.com/flylo-air/web/edit/main/README.md
+            backstage.io/techdocs-ref: url:https://github.com/flylo-air/web/tree/main
           links:
             - url: https://www.flylo-air.com/
-              title: Website
+              title: Live website
+              icon: catalog
+            - url: https://book.flylo-air.com/
+              title: Book flights
               icon: catalog
             - url: https://github.com/flylo-air/web
-              title: Source
+              title: GitHub repo
               icon: github
+            - url: https://github.com/flylo-air/web/blob/main/README.md
+              title: README / docs
+              icon: docs
+            - url: https://www.flylo-air.com/#network
+              title: Route network
+              icon: catalog
         spec:
           type: website
           lifecycle: production
           owner: group:flylo/platform
           system: system:default/flylo-air
+          dependsOn:
+            - component:default/booking-frontend
+            - component:default/booking-backend
+          consumesApis:
+            - api:default/booking-api
         ---
         apiVersion: backstage.io/v1alpha1
         kind: Component
         metadata:
           name: booking-frontend
-          description: FlyLo Air booking UI (book.flylo-air.com)
+          title: Booking Frontend
+          description: >
+            Customer-facing booking UI at book.flylo-air.com — flight search, fare
+            selection, passenger details, and payment hand-off. Consumes the FlyLo
+            booking API and is linked from the public marketing site (web).
           tags:
             - frontend
             - booking
             - flylo
           annotations:
             github.com/project-slug: flylo-air/booking-frontend
-            backstage.io/source-location: url:https://github.com/flylo-air/booking-frontend
+            backstage.io/source-location: url:https://github.com/flylo-air/booking-frontend/
             backstage.io/view-url: https://github.com/flylo-air/booking-frontend
             backstage.io/edit-url: https://github.com/flylo-air/booking-frontend/edit/main
           links:
@@ -127,19 +247,29 @@ services:
               title: Booking site
               icon: catalog
             - url: https://github.com/flylo-air/booking-frontend
-              title: Source
+              title: GitHub repo
               icon: github
+            - url: https://www.flylo-air.com/
+              title: Marketing site
+              icon: catalog
         spec:
           type: website
           lifecycle: production
           owner: group:flylo/platform
           system: system:default/flylo-air
+          dependsOn:
+            - component:default/booking-backend
+          consumesApis:
+            - api:default/booking-api
         ---
         apiVersion: backstage.io/v1alpha1
         kind: Component
         metadata:
           name: booking-backend
-          description: FlyLo Air booking API
+          title: Booking Backend
+          description: >
+            Booking and inventory service that powers search, holds, and confirmations
+            for FlyLo Air. Provides the booking-api consumed by web and booking-frontend.
           tags:
             - backend
             - booking
@@ -147,31 +277,39 @@ services:
             - flylo
           annotations:
             github.com/project-slug: flylo-air/booking-backend
-            backstage.io/source-location: url:https://github.com/flylo-air/booking-backend
+            backstage.io/source-location: url:https://github.com/flylo-air/booking-backend/
             backstage.io/view-url: https://github.com/flylo-air/booking-backend
             backstage.io/edit-url: https://github.com/flylo-air/booking-backend/edit/main
           links:
             - url: https://github.com/flylo-air/booking-backend
-              title: Source
+              title: GitHub repo
               icon: github
+            - url: https://book.flylo-air.com/
+              title: Booking site
+              icon: catalog
         spec:
           type: service
           lifecycle: production
           owner: group:flylo/platform
           system: system:default/flylo-air
+          providesApis:
+            - api:default/booking-api
         ---
         apiVersion: backstage.io/v1alpha1
         kind: Component
         metadata:
           name: crew-app
-          description: FlyLo Air crew mobile / web app
+          title: Crew App
+          description: >
+            FlyLo Air crew mobile/web app for roster, briefings, and day-of-ops tasks
+            used by cabin and flight crew (demo).
           tags:
             - frontend
             - crew
             - flylo
           annotations:
             github.com/project-slug: flylo-air/crew-app
-            backstage.io/source-location: url:https://github.com/flylo-air/crew-app
+            backstage.io/source-location: url:https://github.com/flylo-air/crew-app/
             backstage.io/view-url: https://github.com/flylo-air/crew-app
             backstage.io/edit-url: https://github.com/flylo-air/crew-app/edit/main
           links:
@@ -179,7 +317,7 @@ services:
               title: Crew app
               icon: catalog
             - url: https://github.com/flylo-air/crew-app
-              title: Source
+              title: GitHub repo
               icon: github
         spec:
           type: website
@@ -191,7 +329,10 @@ services:
         kind: Component
         metadata:
           name: ops-odoo
-          description: FlyLo Air operations (Odoo)
+          title: Ops Odoo
+          description: >
+            Internal operations ERP (Odoo) for FlyLo Air — schedules, maintenance
+            planning, and ground ops workflows (demo).
           tags:
             - ops
             - odoo
@@ -199,6 +340,9 @@ services:
           links:
             - url: https://ops.flylo-air.com/
               title: Ops Odoo
+              icon: catalog
+            - url: https://www.flylo-air.com/
+              title: FlyLo Air
               icon: catalog
         spec:
           type: service
@@ -210,7 +354,10 @@ services:
         kind: Component
         metadata:
           name: support-chatwoot
-          description: FlyLo Air customer support (Chatwoot)
+          title: Support Chatwoot
+          description: >
+            Customer support inbox powered by Chatwoot for FlyLo Air passenger care
+            and disruption messaging (demo).
           tags:
             - support
             - chatwoot
@@ -218,6 +365,9 @@ services:
           links:
             - url: https://support.flylo-air.com/
               title: Support Chatwoot
+              icon: catalog
+            - url: https://www.flylo-air.com/
+              title: FlyLo Air
               icon: catalog
         spec:
           type: service
@@ -229,7 +379,10 @@ services:
         kind: Component
         metadata:
           name: insights-bi
-          description: FlyLo Air business intelligence / insights
+          title: Insights BI
+          description: >
+            Business intelligence and operational insights dashboards for FlyLo Air
+            (load factor, on-time, NPS) used by ops and leadership (demo).
           tags:
             - bi
             - insights
@@ -237,6 +390,9 @@ services:
           links:
             - url: https://insights.flylo-air.com/
               title: Insights BI
+              icon: catalog
+            - url: https://www.flylo-air.com/
+              title: FlyLo Air
               icon: catalog
         spec:
           type: service
@@ -282,6 +438,10 @@ services:
               target: /tmp/catalog/system.yaml
               rules:
                 - allow: [System]
+            - type: file
+              target: /tmp/catalog/apis.yaml
+              rules:
+                - allow: [API]
             - type: file
               target: /tmp/catalog/components.yaml
               rules:

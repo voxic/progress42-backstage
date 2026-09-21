@@ -2,17 +2,29 @@ apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: flylo-air
-  description: FlyLo Air airline digital platform (IKEA workshop demo)
+  title: FlyLo Air
+  description: >
+    FlyLo Air airline digital platform — San Francisco–based carrier bridging
+    the Pacific and Atlantic from hubs at SFO and LHR. This system covers the
+    public marketing site, booking stack, crew tooling, ops (Odoo), support
+    (Chatwoot), and insights BI used in the Progress42 IKEA workshop demo.
   tags:
     - airline
     - flylo
     - demo
+    - ikea-workshop
   links:
     - url: https://www.flylo-air.com/
-      title: FlyLo Air website
+      title: Website — www.flylo-air.com
+      icon: catalog
+    - url: https://book.flylo-air.com/
+      title: Book flights
       icon: catalog
     - url: https://backstage.progress42.com
       title: Backstage Demo
       icon: catalog
+    - url: https://github.com/flylo-air
+      title: GitHub org
+      icon: github
 spec:
   owner: group:flylo/platform

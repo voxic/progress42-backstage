@@ -1,0 +1,61 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: booking-api
+  description: >
+    Public booking and inventory API used by the FlyLo marketing site and
+    book.flylo-air.com. Covers flight search, fare quotes, hold/confirm,
+    and passenger record retrieval for the airline demo.
+  tags:
+    - booking
+    - api
+    - openapi
+    - flylo
+  annotations:
+    github.com/project-slug: flylo-air/booking-backend
+    backstage.io/source-location: url:https://github.com/flylo-air/booking-backend
+    backstage.io/view-url: https://github.com/flylo-air/booking-backend
+  links:
+    - url: https://book.flylo-air.com/
+      title: Booking site
+      icon: catalog
+    - url: https://github.com/flylo-air/booking-backend
+      title: Source
+      icon: github
+    - url: https://www.flylo-air.com/
+      title: Marketing site
+      icon: catalog
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:flylo/platform
+  system: system:default/flylo-air
+  definition: |
+    openapi: "3.0.3"
+    info:
+      title: FlyLo Booking API
+      version: "1.0.0"
+      description: Demo OpenAPI stub for FlyLo Air booking (IKEA workshop).
+    paths:
+      /v1/flights/search:
+        get:
+          summary: Search flights
+          parameters:
+            - name: from
+              in: query
+              schema: { type: string }
+            - name: to
+              in: query
+              schema: { type: string }
+            - name: date
+              in: query
+              schema: { type: string, format: date }
+          responses:
+            "200":
+              description: Flight search results
+      /v1/bookings:
+        post:
+          summary: Create booking hold
+          responses:
+            "201":
+              description: Booking held

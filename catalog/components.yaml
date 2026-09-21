@@ -2,41 +2,70 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: web
-  description: FlyLo Air public website
+  title: FlyLo Web
+  description: >
+    Public marketing and booking-entry website for FlyLo Air at
+    https://www.flylo-air.com/. Presents the airline brand (“the quiet way to
+    fly”), route network, cabin products (Atlas / Prospect / Linen), and deep
+    links into the booking experience on book.flylo-air.com. Primary demo
+    surface for the Malmö IKEA workshop — Next.js-style marketing site owned
+    by FlyLo Platform.
   tags:
     - frontend
     - website
+    - marketing
+    - nextjs
     - flylo
+    - demo
   annotations:
     github.com/project-slug: flylo-air/web
-    backstage.io/source-location: url:https://github.com/flylo-air/web
+    backstage.io/source-location: url:https://github.com/flylo-air/web/
     backstage.io/view-url: https://github.com/flylo-air/web
-    backstage.io/edit-url: https://github.com/flylo-air/web/edit/main
+    backstage.io/edit-url: https://github.com/flylo-air/web/edit/main/README.md
+    backstage.io/techdocs-ref: url:https://github.com/flylo-air/web/tree/main
   links:
     - url: https://www.flylo-air.com/
-      title: Website
+      title: Live website
+      icon: catalog
+    - url: https://book.flylo-air.com/
+      title: Book flights
       icon: catalog
     - url: https://github.com/flylo-air/web
-      title: Source
+      title: GitHub repo
       icon: github
+    - url: https://github.com/flylo-air/web/blob/main/README.md
+      title: README / docs
+      icon: docs
+    - url: https://www.flylo-air.com/#network
+      title: Route network
+      icon: catalog
 spec:
   type: website
   lifecycle: production
   owner: group:flylo/platform
   system: system:default/flylo-air
+  dependsOn:
+    - component:default/booking-frontend
+    - component:default/booking-backend
+  consumesApis:
+    - api:default/booking-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: booking-frontend
-  description: FlyLo Air booking UI (book.flylo-air.com)
+  title: Booking Frontend
+  description: >
+    Customer-facing booking UI at book.flylo-air.com — flight search, fare
+    selection, passenger details, and payment hand-off. Consumes the FlyLo
+    booking API and is linked from the public marketing site (web).
   tags:
     - frontend
     - booking
     - flylo
   annotations:
     github.com/project-slug: flylo-air/booking-frontend
-    backstage.io/source-location: url:https://github.com/flylo-air/booking-frontend
+    backstage.io/source-location: url:https://github.com/flylo-air/booking-frontend/
     backstage.io/view-url: https://github.com/flylo-air/booking-frontend
     backstage.io/edit-url: https://github.com/flylo-air/booking-frontend/edit/main
   links:
@@ -44,19 +73,29 @@ metadata:
       title: Booking site
       icon: catalog
     - url: https://github.com/flylo-air/booking-frontend
-      title: Source
+      title: GitHub repo
       icon: github
+    - url: https://www.flylo-air.com/
+      title: Marketing site
+      icon: catalog
 spec:
   type: website
   lifecycle: production
   owner: group:flylo/platform
   system: system:default/flylo-air
+  dependsOn:
+    - component:default/booking-backend
+  consumesApis:
+    - api:default/booking-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: booking-backend
-  description: FlyLo Air booking API
+  title: Booking Backend
+  description: >
+    Booking and inventory service that powers search, holds, and confirmations
+    for FlyLo Air. Provides the booking-api consumed by web and booking-frontend.
   tags:
     - backend
     - booking
@@ -64,31 +103,39 @@ metadata:
     - flylo
   annotations:
     github.com/project-slug: flylo-air/booking-backend
-    backstage.io/source-location: url:https://github.com/flylo-air/booking-backend
+    backstage.io/source-location: url:https://github.com/flylo-air/booking-backend/
     backstage.io/view-url: https://github.com/flylo-air/booking-backend
     backstage.io/edit-url: https://github.com/flylo-air/booking-backend/edit/main
   links:
     - url: https://github.com/flylo-air/booking-backend
-      title: Source
+      title: GitHub repo
       icon: github
+    - url: https://book.flylo-air.com/
+      title: Booking site
+      icon: catalog
 spec:
   type: service
   lifecycle: production
   owner: group:flylo/platform
   system: system:default/flylo-air
+  providesApis:
+    - api:default/booking-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: crew-app
-  description: FlyLo Air crew mobile / web app
+  title: Crew App
+  description: >
+    FlyLo Air crew mobile/web app for roster, briefings, and day-of-ops tasks
+    used by cabin and flight crew (demo).
   tags:
     - frontend
     - crew
     - flylo
   annotations:
     github.com/project-slug: flylo-air/crew-app
-    backstage.io/source-location: url:https://github.com/flylo-air/crew-app
+    backstage.io/source-location: url:https://github.com/flylo-air/crew-app/
     backstage.io/view-url: https://github.com/flylo-air/crew-app
     backstage.io/edit-url: https://github.com/flylo-air/crew-app/edit/main
   links:
@@ -96,7 +143,7 @@ metadata:
       title: Crew app
       icon: catalog
     - url: https://github.com/flylo-air/crew-app
-      title: Source
+      title: GitHub repo
       icon: github
 spec:
   type: website
@@ -108,7 +155,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: ops-odoo
-  description: FlyLo Air operations (Odoo)
+  title: Ops Odoo
+  description: >
+    Internal operations ERP (Odoo) for FlyLo Air — schedules, maintenance
+    planning, and ground ops workflows (demo).
   tags:
     - ops
     - odoo
@@ -116,6 +166,9 @@ metadata:
   links:
     - url: https://ops.flylo-air.com/
       title: Ops Odoo
+      icon: catalog
+    - url: https://www.flylo-air.com/
+      title: FlyLo Air
       icon: catalog
 spec:
   type: service
@@ -127,7 +180,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: support-chatwoot
-  description: FlyLo Air customer support (Chatwoot)
+  title: Support Chatwoot
+  description: >
+    Customer support inbox powered by Chatwoot for FlyLo Air passenger care
+    and disruption messaging (demo).
   tags:
     - support
     - chatwoot
@@ -135,6 +191,9 @@ metadata:
   links:
     - url: https://support.flylo-air.com/
       title: Support Chatwoot
+      icon: catalog
+    - url: https://www.flylo-air.com/
+      title: FlyLo Air
       icon: catalog
 spec:
   type: service
@@ -146,7 +205,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: insights-bi
-  description: FlyLo Air business intelligence / insights
+  title: Insights BI
+  description: >
+    Business intelligence and operational insights dashboards for FlyLo Air
+    (load factor, on-time, NPS) used by ops and leadership (demo).
   tags:
     - bi
     - insights
@@ -154,6 +216,9 @@ metadata:
   links:
     - url: https://insights.flylo-air.com/
       title: Insights BI
+      icon: catalog
+    - url: https://www.flylo-air.com/
+      title: FlyLo Air
       icon: catalog
 spec:
   type: service
