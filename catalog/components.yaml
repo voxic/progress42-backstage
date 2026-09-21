@@ -19,10 +19,9 @@ metadata:
     - demo
   annotations:
     github.com/project-slug: voxic/flylo-web
-    backstage.io/source-location: file:/tmp/docs/flylo-web/
+    backstage.io/source-location: url:https://github.com/voxic/flylo-web/
     backstage.io/view-url: https://github.com/voxic/flylo-web
     backstage.io/edit-url: https://github.com/voxic/flylo-web/edit/main/README.md
-    backstage.io/techdocs-ref: dir:.
   links:
     - url: https://www.flylo-air.com/
       title: Live website
