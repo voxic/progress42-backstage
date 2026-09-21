@@ -1,3 +1,14 @@
+services:
+  backstage:
+    image: ghcr.io/backstage/backstage:1.55.0
+    restart: unless-stopped
+    mem_limit: 768m
+    expose:
+      - "7007"
+    environment:
+      TZ: Europe/Stockholm
+      NODE_OPTIONS: "--max-old-space-size=512"
+    entrypoint: ["/bin/sh", "-c"]
     command:
       - |
         set -e
@@ -437,8 +448,6 @@
         {"site_name": "FlyLo Web", "site_description": "Public marketing site for FlyLo Air", "etag": "flylo-web-demo-1", "build_timestamp": 1789992270, "files": ["index.html", "techdocs_metadata.json"]}
         METAEOF
         cat > /tmp/app-config.demo.yaml <<'YAMLEOF'
-
-
 
         app:
           title: Progress42 Backstage
