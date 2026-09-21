@@ -1,40 +1,15 @@
+# Local/reference compose. Dokploy uses dokploy-compose.yml (sqlite, lean).
 services:
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    mem_limit: 256m
-    environment:
-      POSTGRES_USER: backstage
-      POSTGRES_PASSWORD: backstage_demo_p42
-      POSTGRES_DB: backstage
-      TZ: Europe/Stockholm
-    volumes:
-      - backstage-pg:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U backstage -d backstage"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
   backstage:
     build: .
     image: ghcr.io/voxic/progress42-backstage:1.55.0
     restart: unless-stopped
-    mem_limit: 768m
-    depends_on:
-      postgres:
-        condition: service_healthy
+    ports:
+      - "7007:7007"
     environment:
       TZ: Europe/Stockholm
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: "5432"
-      POSTGRES_USER: backstage
-      POSTGRES_PASSWORD: backstage_demo_p42
-      POSTGRES_DB: backstage
-      NODE_OPTIONS: "--max-old-space-size=512"
-    # Dokploy routes via domain to this port
-    expose:
-      - "7007"
+    volumes:
+      - backstage-data:/data
 
 volumes:
-  backstage-pg:
+  backstage-data:

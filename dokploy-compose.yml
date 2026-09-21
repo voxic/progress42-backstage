@@ -1,38 +1,15 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    mem_limit: 256m
-    environment:
-      POSTGRES_USER: backstage
-      POSTGRES_PASSWORD: backstage_demo_p42
-      POSTGRES_DB: backstage
-      TZ: Europe/Stockholm
-    volumes:
-      - backstage-pg:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U backstage -d backstage"]
-      interval: 5s
-      timeout: 5s
-      retries: 30
-
   backstage:
     image: ghcr.io/backstage/backstage:1.55.0
     restart: unless-stopped
     mem_limit: 768m
-    depends_on:
-      postgres:
-        condition: service_healthy
     expose:
       - "7007"
     environment:
       TZ: Europe/Stockholm
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: "5432"
-      POSTGRES_USER: backstage
-      POSTGRES_PASSWORD: backstage_demo_p42
-      POSTGRES_DB: backstage
       NODE_OPTIONS: "--max-old-space-size=512"
+    volumes:
+      - backstage-data:/data
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
@@ -53,13 +30,8 @@ services:
             methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
             credentials: true
           database:
-            client: pg
-            connection:
-              host: $${POSTGRES_HOST}
-              port: $${POSTGRES_PORT}
-              user: $${POSTGRES_USER}
-              password: $${POSTGRES_PASSWORD}
-              database: $${POSTGRES_DB}
+            client: better-sqlite3
+            connection: /data/backstage.db
         auth:
           providers:
             guest:
@@ -87,8 +59,7 @@ services:
         permission:
           enabled: false
         YAMLEOF
-        # Wait for postgres briefly (healthcheck already gates depends_on)
         exec node packages/backend --config app-config.yaml --config /tmp/app-config.demo.yaml
 
 volumes:
-  backstage-pg:
+  backstage-data:
