@@ -14,6 +14,9 @@ backend:
     origin: https://backstage.progress42.com
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
+  reading:
+    allow:
+      - host: raw.githubusercontent.com
   database:
     client: better-sqlite3
     connection:

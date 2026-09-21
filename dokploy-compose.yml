@@ -12,7 +12,199 @@ services:
     command:
       - |
         set -e
-        mkdir -p /tmp/backstage-db
+        mkdir -p /tmp/backstage-db /tmp/catalog
+        cat > /tmp/catalog/org.yaml <<'CATEOF'
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  description: Progress42 platform team (demo)
+spec:
+  type: team
+  profile:
+    displayName: Platform Team
+    email: platform@progress42.example
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: commerce-team
+  description: Commerce / retail product team (demo)
+spec:
+  type: team
+  profile:
+    displayName: Commerce Team
+    email: commerce@progress42.example
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: guest
+spec:
+  profile:
+    displayName: Guest User
+    email: guest@progress42.example
+  memberOf: [platform-team]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: emil
+spec:
+  profile:
+    displayName: Emil Nildersen
+    email: emil@progress42.example
+  memberOf: [platform-team, commerce-team]
+CATEOF
+        cat > /tmp/catalog/system.yaml <<'CATEOF'
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: retail-platform
+  description: Retail / commerce platform for the IKEA workshop demo
+  tags:
+    - retail
+    - commerce
+    - demo
+  links:
+    - url: https://backstage.progress42.com
+      title: Backstage Demo
+      icon: catalog
+spec:
+  owner: group:default/commerce-team
+  domain: default/commerce
+CATEOF
+        cat > /tmp/catalog/components.yaml <<'CATEOF'
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payments-api
+  description: Payment processing API for store checkout (demo)
+  tags:
+    - payments
+    - api
+    - java
+  links:
+    - url: https://github.com/voxic/progress42-backstage/blob/main/docs/payments-api.md
+      title: README / Tech notes
+      icon: docs
+    - url: https://github.com/voxic/progress42-backstage
+      title: Source
+      icon: github
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/platform-team
+  system: system:default/retail-platform
+  providesApis:
+    - api:default/payments-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: storefront-web
+  description: Customer-facing storefront web app (demo)
+  tags:
+    - frontend
+    - react
+    - retail
+  links:
+    - url: https://github.com/voxic/progress42-backstage/blob/main/README.md
+      title: README
+      icon: github
+spec:
+  type: website
+  lifecycle: production
+  owner: group:default/commerce-team
+  system: system:default/retail-platform
+  consumesApis:
+    - api:default/payments-api
+    - api:default/inventory-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: inventory-service
+  description: Stock levels and warehouse inventory service (demo)
+  tags:
+    - inventory
+    - service
+    - nodejs
+  links:
+    - url: https://github.com/voxic/progress42-backstage
+      title: Catalog repo
+      icon: github
+spec:
+  type: service
+  lifecycle: experimental
+  owner: group:default/platform-team
+  system: system:default/retail-platform
+  providesApis:
+    - api:default/inventory-api
+CATEOF
+        cat > /tmp/catalog/apis.yaml <<'CATEOF'
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: payments-api
+  description: OpenAPI for the payments service (demo stub)
+  tags:
+    - payments
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/platform-team
+  system: system:default/retail-platform
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Payments API
+      version: 1.0.0
+    paths:
+      /health:
+        get:
+          summary: Health check
+          responses:
+            "200":
+              description: OK
+      /v1/charges:
+        post:
+          summary: Create a charge
+          responses:
+            "201":
+              description: Created
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: inventory-api
+  description: Inventory lookup API (demo stub)
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: group:default/platform-team
+  system: system:default/retail-platform
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Inventory API
+      version: 0.1.0
+    paths:
+      /v1/sku/{sku}:
+        get:
+          summary: Get stock for SKU
+          parameters:
+            - name: sku
+              in: path
+              required: true
+              schema:
+                type: string
+          responses:
+            "200":
+              description: OK
+CATEOF
         cat > /tmp/app-config.demo.yaml <<'YAMLEOF'
         app:
           title: Progress42 Backstage
@@ -28,6 +220,9 @@ services:
             origin: https://backstage.progress42.com
             methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
             credentials: true
+          reading:
+            allow:
+              - host: raw.githubusercontent.com
           database:
             client: better-sqlite3
             connection:
@@ -40,20 +235,20 @@ services:
           rules:
             - allow: [Component, System, API, Resource, Location, User, Group, Domain]
           locations:
-            - type: url
-              target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/org.yaml
+            - type: file
+              target: /tmp/catalog/org.yaml
               rules:
                 - allow: [User, Group]
-            - type: url
-              target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/system.yaml
+            - type: file
+              target: /tmp/catalog/system.yaml
               rules:
                 - allow: [System]
-            - type: url
-              target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/components.yaml
+            - type: file
+              target: /tmp/catalog/components.yaml
               rules:
                 - allow: [Component]
-            - type: url
-              target: https://raw.githubusercontent.com/voxic/progress42-backstage/main/catalog/apis.yaml
+            - type: file
+              target: /tmp/catalog/apis.yaml
               rules:
                 - allow: [API]
         permission:
