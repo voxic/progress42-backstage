@@ -402,18 +402,53 @@ services:
         CATEOF
         mkdir -p /tmp/docs/flylo-web/docs /tmp/techdocs-publish/default/component/web
         cat > /tmp/docs/flylo-web/mkdocs.yml <<'DOCSEOF_mkdocs_yml'
-        site_name: 'FlyLo Web'
+        site_name: FlyLo Web
         docs_dir: docs
         DOCSEOF_mkdocs_yml
         cat > /tmp/docs/flylo-web/docs/index.md <<'DOCSEOF_index'
         # FlyLo Web
-        See TechDocs tab (prebuilt).
+        Demo docs for TechDocs.
         DOCSEOF_index
-        echo "Fetching prebuilt TechDocs..."
-        curl -fsSL -o /tmp/flylo-web-site.tgz \
-          https://raw.githubusercontent.com/voxic/progress42-backstage/main/docs/flylo-web/site.tgz
-        tar xzf /tmp/flylo-web-site.tgz -C /tmp/techdocs-publish/default/component/web
-        cat > /tmp/app-config.demo.yaml <<'YAMLEOF
+        cat > /tmp/techdocs-publish/default/component/web/index.html <<'HTMLEOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8"/>
+          <title>FlyLo Web</title>
+          <style>
+            body{font-family:system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#1a1a1a}
+            a{color:#0b57d0} code{background:#f4f4f4;padding:.1rem .3rem;border-radius:4px}
+            h1{margin-bottom:.25rem} .muted{color:#555}
+          </style>
+        </head>
+        <body>
+          <h1>FlyLo Web</h1>
+          <p class="muted">Public marketing site for FlyLo Air — primary demo component.</p>
+          <ul>
+            <li><strong>Live:</strong> <a href="https://www.flylo-air.com/">www.flylo-air.com</a></li>
+            <li><strong>Repo:</strong> <a href="https://github.com/voxic/flylo-web">github.com/voxic/flylo-web</a></li>
+            <li><strong>Stack:</strong> TypeScript · Next.js</li>
+            <li><strong>Owner:</strong> group:flylo/platform · <strong>System:</strong> flylo-air</li>
+          </ul>
+          <h2>Related</h2>
+          <ul>
+            <li>booking-frontend · book.flylo-air.com</li>
+            <li>booking-backend · booking-api</li>
+          </ul>
+          <h2>Demo tips</h2>
+          <ol>
+            <li>Catalog → FlyLo Web → About (deps + APIs)</li>
+            <li>Open GitHub link to <code>voxic/flylo-web</code></li>
+            <li>Pair with Cursor on that repo</li>
+          </ol>
+        </body>
+        </html>
+        HTMLEOF
+        cat > /tmp/techdocs-publish/default/component/web/techdocs_metadata.json <<'METAEOF'
+        {"site_name": "FlyLo Web", "site_description": "Public marketing site for FlyLo Air", "etag": "flylo-web-demo-1", "build_timestamp": 1789992270, "files": ["index.html", "techdocs_metadata.json"]}
+        METAEOF
+        cat > /tmp/app-config.demo.yaml <<'YAMLEOF'
+
         app:
           title: Progress42 Backstage
           baseUrl: https://backstage.progress42.com
