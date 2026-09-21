@@ -23,6 +23,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    expose:
+      - "7007"
     environment:
       TZ: Europe/Stockholm
       POSTGRES_HOST: postgres
@@ -53,13 +55,12 @@ services:
           database:
             client: pg
             connection:
-              host: ${POSTGRES_HOST}
-              port: ${POSTGRES_PORT}
-              user: ${POSTGRES_USER}
-              password: ${POSTGRES_PASSWORD}
-              database: ${POSTGRES_DB}
+              host: $${POSTGRES_HOST}
+              port: $${POSTGRES_PORT}
+              user: $${POSTGRES_USER}
+              password: $${POSTGRES_PASSWORD}
+              database: $${POSTGRES_DB}
         auth:
-          environment: production
           providers:
             guest:
               dangerouslyAllowOutsideDevelopment: true
