@@ -8,12 +8,11 @@ services:
     environment:
       TZ: Europe/Stockholm
       NODE_OPTIONS: "--max-old-space-size=512"
-    volumes:
-      - backstage-data:/data
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
         set -e
+        mkdir -p /tmp/backstage-db
         cat > /tmp/app-config.demo.yaml <<'YAMLEOF'
         app:
           title: Progress42 Backstage
@@ -32,7 +31,7 @@ services:
           database:
             client: better-sqlite3
             connection:
-              directory: /data
+              directory: /tmp/backstage-db
         auth:
           providers:
             guest:
@@ -61,6 +60,3 @@ services:
           enabled: false
         YAMLEOF
         exec node packages/backend --config app-config.yaml --config /tmp/app-config.demo.yaml
-
-volumes:
-  backstage-data:
