@@ -2,10 +2,9 @@ apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: progress42-ikea-demo-catalog
-  description: Seeded catalog for Progress42 IKEA workshop demo
+  description: FlyLo Air catalog for Progress42 IKEA workshop demo
 spec:
   targets:
     - ./org.yaml
     - ./system.yaml
     - ./components.yaml
-    - ./apis.yaml

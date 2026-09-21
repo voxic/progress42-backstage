@@ -1,25 +1,27 @@
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
-  name: platform-team
-  description: Progress42 platform team (demo)
+  name: platform
+  namespace: flylo
+  description: FlyLo Air platform engineering (demo)
 spec:
   type: team
   profile:
-    displayName: Platform Team
-    email: platform@progress42.example
+    displayName: FlyLo Platform
+    email: platform@flylo-air.example
   children: []
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
-  name: commerce-team
-  description: Commerce / retail product team (demo)
+  name: ops
+  namespace: flylo
+  description: FlyLo Air operations (demo)
 spec:
   type: team
   profile:
-    displayName: Commerce Team
-    email: commerce@progress42.example
+    displayName: FlyLo Ops
+    email: ops@flylo-air.example
   children: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -29,8 +31,8 @@ metadata:
 spec:
   profile:
     displayName: Guest User
-    email: guest@progress42.example
-  memberOf: [platform-team]
+    email: guest@flylo-air.example
+  memberOf: [flylo/platform]
 ---
 apiVersion: backstage.io/v1alpha1
 kind: User
@@ -40,4 +42,4 @@ spec:
   profile:
     displayName: Emil Nildersen
     email: emil@progress42.example
-  memberOf: [platform-team, commerce-team]
+  memberOf: [flylo/platform, flylo/ops]

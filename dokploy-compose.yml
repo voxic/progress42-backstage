@@ -17,25 +17,27 @@ services:
         apiVersion: backstage.io/v1alpha1
         kind: Group
         metadata:
-          name: platform-team
-          description: Progress42 platform team (demo)
+          name: platform
+          namespace: flylo
+          description: FlyLo Air platform engineering (demo)
         spec:
           type: team
           profile:
-            displayName: Platform Team
-            email: platform@progress42.example
+            displayName: FlyLo Platform
+            email: platform@flylo-air.example
           children: []
         ---
         apiVersion: backstage.io/v1alpha1
         kind: Group
         metadata:
-          name: commerce-team
-          description: Commerce / retail product team (demo)
+          name: ops
+          namespace: flylo
+          description: FlyLo Air operations (demo)
         spec:
           type: team
           profile:
-            displayName: Commerce Team
-            email: commerce@progress42.example
+            displayName: FlyLo Ops
+            email: ops@flylo-air.example
           children: []
         ---
         apiVersion: backstage.io/v1alpha1
@@ -45,8 +47,8 @@ services:
         spec:
           profile:
             displayName: Guest User
-            email: guest@progress42.example
-          memberOf: [platform-team]
+            email: guest@flylo-air.example
+          memberOf: [flylo/platform]
         ---
         apiVersion: backstage.io/v1alpha1
         kind: User
@@ -56,154 +58,191 @@ services:
           profile:
             displayName: Emil Nildersen
             email: emil@progress42.example
-          memberOf: [platform-team, commerce-team]
+          memberOf: [flylo/platform, flylo/ops]
         CATEOF
         cat > /tmp/catalog/system.yaml <<'CATEOF'
         apiVersion: backstage.io/v1alpha1
         kind: System
         metadata:
-          name: retail-platform
-          description: Retail / commerce platform for the IKEA workshop demo
+          name: flylo-air
+          description: FlyLo Air airline digital platform (IKEA workshop demo)
           tags:
-            - retail
-            - commerce
+            - airline
+            - flylo
             - demo
           links:
+            - url: https://www.flylo-air.com/
+              title: FlyLo Air website
+              icon: catalog
             - url: https://backstage.progress42.com
               title: Backstage Demo
               icon: catalog
         spec:
-          owner: group:default/commerce-team
-          domain: default/commerce
+          owner: group:flylo/platform
         CATEOF
         cat > /tmp/catalog/components.yaml <<'CATEOF'
         apiVersion: backstage.io/v1alpha1
         kind: Component
         metadata:
-          name: payments-api
-          description: Payment processing API for store checkout (demo)
+          name: web
+          description: FlyLo Air public website
           tags:
-            - payments
-            - api
-            - java
+            - frontend
+            - website
+            - flylo
+          annotations:
+            github.com/project-slug: flylo-air/web
+            backstage.io/source-location: url:https://github.com/flylo-air/web
+            backstage.io/view-url: https://github.com/flylo-air/web
+            backstage.io/edit-url: https://github.com/flylo-air/web/edit/main
           links:
-            - url: https://github.com/voxic/progress42-backstage/blob/main/docs/payments-api.md
-              title: README / Tech notes
-              icon: docs
-            - url: https://github.com/voxic/progress42-backstage
+            - url: https://www.flylo-air.com/
+              title: Website
+              icon: catalog
+            - url: https://github.com/flylo-air/web
+              title: Source
+              icon: github
+        spec:
+          type: website
+          lifecycle: production
+          owner: group:flylo/platform
+          system: system:default/flylo-air
+        ---
+        apiVersion: backstage.io/v1alpha1
+        kind: Component
+        metadata:
+          name: booking-frontend
+          description: FlyLo Air booking UI (book.flylo-air.com)
+          tags:
+            - frontend
+            - booking
+            - flylo
+          annotations:
+            github.com/project-slug: flylo-air/booking-frontend
+            backstage.io/source-location: url:https://github.com/flylo-air/booking-frontend
+            backstage.io/view-url: https://github.com/flylo-air/booking-frontend
+            backstage.io/edit-url: https://github.com/flylo-air/booking-frontend/edit/main
+          links:
+            - url: https://book.flylo-air.com/
+              title: Booking site
+              icon: catalog
+            - url: https://github.com/flylo-air/booking-frontend
+              title: Source
+              icon: github
+        spec:
+          type: website
+          lifecycle: production
+          owner: group:flylo/platform
+          system: system:default/flylo-air
+        ---
+        apiVersion: backstage.io/v1alpha1
+        kind: Component
+        metadata:
+          name: booking-backend
+          description: FlyLo Air booking API
+          tags:
+            - backend
+            - booking
+            - api
+            - flylo
+          annotations:
+            github.com/project-slug: flylo-air/booking-backend
+            backstage.io/source-location: url:https://github.com/flylo-air/booking-backend
+            backstage.io/view-url: https://github.com/flylo-air/booking-backend
+            backstage.io/edit-url: https://github.com/flylo-air/booking-backend/edit/main
+          links:
+            - url: https://github.com/flylo-air/booking-backend
               title: Source
               icon: github
         spec:
           type: service
           lifecycle: production
-          owner: group:default/platform-team
-          system: system:default/retail-platform
-          providesApis:
-            - api:default/payments-api
+          owner: group:flylo/platform
+          system: system:default/flylo-air
         ---
         apiVersion: backstage.io/v1alpha1
         kind: Component
         metadata:
-          name: storefront-web
-          description: Customer-facing storefront web app (demo)
+          name: crew-app
+          description: FlyLo Air crew mobile / web app
           tags:
             - frontend
-            - react
-            - retail
+            - crew
+            - flylo
+          annotations:
+            github.com/project-slug: flylo-air/crew-app
+            backstage.io/source-location: url:https://github.com/flylo-air/crew-app
+            backstage.io/view-url: https://github.com/flylo-air/crew-app
+            backstage.io/edit-url: https://github.com/flylo-air/crew-app/edit/main
           links:
-            - url: https://github.com/voxic/progress42-backstage/blob/main/README.md
-              title: README
+            - url: https://crew.flylo-air.com/
+              title: Crew app
+              icon: catalog
+            - url: https://github.com/flylo-air/crew-app
+              title: Source
               icon: github
         spec:
           type: website
           lifecycle: production
-          owner: group:default/commerce-team
-          system: system:default/retail-platform
-          consumesApis:
-            - api:default/payments-api
-            - api:default/inventory-api
+          owner: group:flylo/ops
+          system: system:default/flylo-air
         ---
         apiVersion: backstage.io/v1alpha1
         kind: Component
         metadata:
-          name: inventory-service
-          description: Stock levels and warehouse inventory service (demo)
+          name: ops-odoo
+          description: FlyLo Air operations (Odoo)
           tags:
-            - inventory
-            - service
-            - nodejs
+            - ops
+            - odoo
+            - flylo
           links:
-            - url: https://github.com/voxic/progress42-backstage
-              title: Catalog repo
-              icon: github
+            - url: https://ops.flylo-air.com/
+              title: Ops Odoo
+              icon: catalog
         spec:
           type: service
-          lifecycle: experimental
-          owner: group:default/platform-team
-          system: system:default/retail-platform
-          providesApis:
-            - api:default/inventory-api
-        CATEOF
-        cat > /tmp/catalog/apis.yaml <<'CATEOF'
-        apiVersion: backstage.io/v1alpha1
-        kind: API
-        metadata:
-          name: payments-api
-          description: OpenAPI for the payments service (demo stub)
-          tags:
-            - payments
-        spec:
-          type: openapi
           lifecycle: production
-          owner: group:default/platform-team
-          system: system:default/retail-platform
-          definition: |
-            openapi: "3.0.0"
-            info:
-              title: Payments API
-              version: 1.0.0
-            paths:
-              /health:
-                get:
-                  summary: Health check
-                  responses:
-                    "200":
-                      description: OK
-              /v1/charges:
-                post:
-                  summary: Create a charge
-                  responses:
-                    "201":
-                      description: Created
+          owner: group:flylo/ops
+          system: system:default/flylo-air
         ---
         apiVersion: backstage.io/v1alpha1
-        kind: API
+        kind: Component
         metadata:
-          name: inventory-api
-          description: Inventory lookup API (demo stub)
+          name: support-chatwoot
+          description: FlyLo Air customer support (Chatwoot)
+          tags:
+            - support
+            - chatwoot
+            - flylo
+          links:
+            - url: https://support.flylo-air.com/
+              title: Support Chatwoot
+              icon: catalog
         spec:
-          type: openapi
-          lifecycle: experimental
-          owner: group:default/platform-team
-          system: system:default/retail-platform
-          definition: |
-            openapi: "3.0.0"
-            info:
-              title: Inventory API
-              version: 0.1.0
-            paths:
-              /v1/sku/{sku}:
-                get:
-                  summary: Get stock for SKU
-                  parameters:
-                    - name: sku
-                      in: path
-                      required: true
-                      schema:
-                        type: string
-                  responses:
-                    "200":
-                      description: OK
+          type: service
+          lifecycle: production
+          owner: group:flylo/ops
+          system: system:default/flylo-air
+        ---
+        apiVersion: backstage.io/v1alpha1
+        kind: Component
+        metadata:
+          name: insights-bi
+          description: FlyLo Air business intelligence / insights
+          tags:
+            - bi
+            - insights
+            - flylo
+          links:
+            - url: https://insights.flylo-air.com/
+              title: Insights BI
+              icon: catalog
+        spec:
+          type: service
+          lifecycle: production
+          owner: group:flylo/ops
+          system: system:default/flylo-air
         CATEOF
         cat > /tmp/app-config.demo.yaml <<'YAMLEOF'
         app:
@@ -247,10 +286,6 @@ services:
               target: /tmp/catalog/components.yaml
               rules:
                 - allow: [Component]
-            - type: file
-              target: /tmp/catalog/apis.yaml
-              rules:
-                - allow: [API]
         permission:
           enabled: false
         YAMLEOF

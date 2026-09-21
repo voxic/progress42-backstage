@@ -1,66 +1,162 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: payments-api
-  description: Payment processing API for store checkout (demo)
+  name: web
+  description: FlyLo Air public website
   tags:
-    - payments
-    - api
-    - java
+    - frontend
+    - website
+    - flylo
+  annotations:
+    github.com/project-slug: flylo-air/web
+    backstage.io/source-location: url:https://github.com/flylo-air/web
+    backstage.io/view-url: https://github.com/flylo-air/web
+    backstage.io/edit-url: https://github.com/flylo-air/web/edit/main
   links:
-    - url: https://github.com/voxic/progress42-backstage/blob/main/docs/payments-api.md
-      title: README / Tech notes
-      icon: docs
-    - url: https://github.com/voxic/progress42-backstage
+    - url: https://www.flylo-air.com/
+      title: Website
+      icon: catalog
+    - url: https://github.com/flylo-air/web
+      title: Source
+      icon: github
+spec:
+  type: website
+  lifecycle: production
+  owner: group:flylo/platform
+  system: system:default/flylo-air
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: booking-frontend
+  description: FlyLo Air booking UI (book.flylo-air.com)
+  tags:
+    - frontend
+    - booking
+    - flylo
+  annotations:
+    github.com/project-slug: flylo-air/booking-frontend
+    backstage.io/source-location: url:https://github.com/flylo-air/booking-frontend
+    backstage.io/view-url: https://github.com/flylo-air/booking-frontend
+    backstage.io/edit-url: https://github.com/flylo-air/booking-frontend/edit/main
+  links:
+    - url: https://book.flylo-air.com/
+      title: Booking site
+      icon: catalog
+    - url: https://github.com/flylo-air/booking-frontend
+      title: Source
+      icon: github
+spec:
+  type: website
+  lifecycle: production
+  owner: group:flylo/platform
+  system: system:default/flylo-air
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: booking-backend
+  description: FlyLo Air booking API
+  tags:
+    - backend
+    - booking
+    - api
+    - flylo
+  annotations:
+    github.com/project-slug: flylo-air/booking-backend
+    backstage.io/source-location: url:https://github.com/flylo-air/booking-backend
+    backstage.io/view-url: https://github.com/flylo-air/booking-backend
+    backstage.io/edit-url: https://github.com/flylo-air/booking-backend/edit/main
+  links:
+    - url: https://github.com/flylo-air/booking-backend
       title: Source
       icon: github
 spec:
   type: service
   lifecycle: production
-  owner: group:default/platform-team
-  system: system:default/retail-platform
-  providesApis:
-    - api:default/payments-api
+  owner: group:flylo/platform
+  system: system:default/flylo-air
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: storefront-web
-  description: Customer-facing storefront web app (demo)
+  name: crew-app
+  description: FlyLo Air crew mobile / web app
   tags:
     - frontend
-    - react
-    - retail
+    - crew
+    - flylo
+  annotations:
+    github.com/project-slug: flylo-air/crew-app
+    backstage.io/source-location: url:https://github.com/flylo-air/crew-app
+    backstage.io/view-url: https://github.com/flylo-air/crew-app
+    backstage.io/edit-url: https://github.com/flylo-air/crew-app/edit/main
   links:
-    - url: https://github.com/voxic/progress42-backstage/blob/main/README.md
-      title: README
+    - url: https://crew.flylo-air.com/
+      title: Crew app
+      icon: catalog
+    - url: https://github.com/flylo-air/crew-app
+      title: Source
       icon: github
 spec:
   type: website
   lifecycle: production
-  owner: group:default/commerce-team
-  system: system:default/retail-platform
-  consumesApis:
-    - api:default/payments-api
-    - api:default/inventory-api
+  owner: group:flylo/ops
+  system: system:default/flylo-air
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: inventory-service
-  description: Stock levels and warehouse inventory service (demo)
+  name: ops-odoo
+  description: FlyLo Air operations (Odoo)
   tags:
-    - inventory
-    - service
-    - nodejs
+    - ops
+    - odoo
+    - flylo
   links:
-    - url: https://github.com/voxic/progress42-backstage
-      title: Catalog repo
-      icon: github
+    - url: https://ops.flylo-air.com/
+      title: Ops Odoo
+      icon: catalog
 spec:
   type: service
-  lifecycle: experimental
-  owner: group:default/platform-team
-  system: system:default/retail-platform
-  providesApis:
-    - api:default/inventory-api
+  lifecycle: production
+  owner: group:flylo/ops
+  system: system:default/flylo-air
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: support-chatwoot
+  description: FlyLo Air customer support (Chatwoot)
+  tags:
+    - support
+    - chatwoot
+    - flylo
+  links:
+    - url: https://support.flylo-air.com/
+      title: Support Chatwoot
+      icon: catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: group:flylo/ops
+  system: system:default/flylo-air
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: insights-bi
+  description: FlyLo Air business intelligence / insights
+  tags:
+    - bi
+    - insights
+    - flylo
+  links:
+    - url: https://insights.flylo-air.com/
+      title: Insights BI
+      icon: catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: group:flylo/ops
+  system: system:default/flylo-air

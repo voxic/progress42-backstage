@@ -1,3 +1,3 @@
-# Progress42 Backstage demo docs
+# Docs
 
-This folder is a placeholder. Component READMEs link back to the repo.
+Demo tech notes for Progress42 Backstage / FlyLo Air catalog.

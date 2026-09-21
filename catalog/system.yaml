@@ -1,16 +1,18 @@
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: retail-platform
-  description: Retail / commerce platform for the IKEA workshop demo
+  name: flylo-air
+  description: FlyLo Air airline digital platform (IKEA workshop demo)
   tags:
-    - retail
-    - commerce
+    - airline
+    - flylo
     - demo
   links:
+    - url: https://www.flylo-air.com/
+      title: FlyLo Air website
+      icon: catalog
     - url: https://backstage.progress42.com
       title: Backstage Demo
       icon: catalog
 spec:
-  owner: group:default/commerce-team
-  domain: default/commerce
+  owner: group:flylo/platform
