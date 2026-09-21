@@ -193,10 +193,10 @@ services:
             - demo
           annotations:
             github.com/project-slug: voxic/flylo-web
-            backstage.io/source-location: url:https://github.com/voxic/flylo-web/
+            backstage.io/source-location: file:/tmp/docs/flylo-web/
             backstage.io/view-url: https://github.com/voxic/flylo-web
             backstage.io/edit-url: https://github.com/voxic/flylo-web/edit/main/README.md
-            backstage.io/techdocs-ref: url:https://github.com/voxic/flylo-web/tree/main
+            backstage.io/techdocs-ref: dir:.
           links:
             - url: https://www.flylo-air.com/
               title: Live website
@@ -400,6 +400,78 @@ services:
           owner: group:flylo/ops
           system: system:default/flylo-air
         CATEOF
+        mkdir -p /tmp/docs/flylo-web/docs
+        cat > /tmp/docs/flylo-web/mkdocs.yml <<'DOCSEOF_mkdocs_yml'
+        site_name: 'FlyLo Web'
+        site_description: 'Public marketing site for FlyLo Air'
+
+        nav:
+          - Overview: index.md
+          - Architecture: architecture.md
+          - Demo notes: demo.md
+
+        plugins:
+          - techdocs-core
+        DOCSEOF_mkdocs_yml
+        cat > /tmp/docs/flylo-web/docs/index.md <<'DOCSEOF_docs_index_md'
+        # FlyLo Web
+
+        Public marketing and booking-entry website for **FlyLo Air** — “the quiet way to fly.”
+
+        | | |
+        |---|---|
+        | **Live** | [www.flylo-air.com](https://www.flylo-air.com/) |
+        | **Repo** | [github.com/voxic/flylo-web](https://github.com/voxic/flylo-web) |
+        | **Owner** | [FlyLo Platform](/catalog/default/group/flylo.platform) |
+        | **System** | [flylo-air](/catalog/default/system/flylo-air) |
+        | **Stack** | TypeScript · Next.js |
+
+        ## What it does
+
+        - Brand homepage, route network, and cabin products (Atlas / Prospect / Linen)
+        - Deep links into booking on [book.flylo-air.com](https://book.flylo-air.com/)
+        - Primary surface for Cursor + Backstage demos (Malmö workshop)
+
+        ## Related components
+
+        - [booking-frontend](/catalog/default/component/booking-frontend) — booking UI
+        - [booking-backend](/catalog/default/component/booking-backend) — booking API
+        - [booking-api](/catalog/default/api/booking-api) — OpenAPI contract
+
+        ## Quick links
+
+        - [Open GitHub repo](https://github.com/voxic/flylo-web)
+        - [README](https://github.com/voxic/flylo-web/blob/main/README.md)
+        DOCSEOF_docs_index_md
+        cat > /tmp/docs/flylo-web/docs/architecture.md <<'DOCSEOF_docs_architecture_md'
+        # Architecture
+
+        ```
+        www.flylo-air.com  (web / Next.js)
+                │
+                ├── deep link ──► book.flylo-air.com  (booking-frontend)
+                │                        │
+                │                        ▼
+                └── consumes ──► booking-api ◄── booking-backend
+        ```
+
+        - **web** owns marketing pages and CTA into booking
+        - **booking-frontend** owns search / select / pay UX
+        - **booking-backend** provides `booking-api` (flights, holds, tickets)
+
+        Owned by `group:flylo/platform` under system `flylo-air`.
+        DOCSEOF_docs_architecture_md
+        cat > /tmp/docs/flylo-web/docs/demo.md <<'DOCSEOF_docs_demo_md'
+        # Demo notes (Malmö)
+
+        1. Open **Catalog → FlyLo Web** in Backstage
+        2. Show **About** (owner, system, depends-on, APIs)
+        3. Open **GitHub** link → [voxic/flylo-web](https://github.com/voxic/flylo-web)
+        4. Optional: live site [www.flylo-air.com](https://www.flylo-air.com/)
+        5. Pair with Cursor on the `web` repo for agentic coding
+
+        TechDocs for this component are served from the Progress42 Backstage catalog repo (local builder), not cloned from the private app repo — so docs stay available without a GitHub App token.
+        DOCSEOF_docs_demo_md
         cat > /tmp/app-config.demo.yaml <<'YAMLEOF'
         app:
           title: Progress42 Backstage
@@ -446,6 +518,12 @@ services:
               target: /tmp/catalog/components.yaml
               rules:
                 - allow: [Component]
+        techdocs:
+          builder: local
+          generator:
+            runIn: local
+          publisher:
+            type: local
         permission:
           enabled: false
         YAMLEOF

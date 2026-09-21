@@ -1,0 +1,10 @@
+site_name: 'FlyLo Web'
+site_description: 'Public marketing site for FlyLo Air'
+
+nav:
+  - Overview: index.md
+  - Architecture: architecture.md
+  - Demo notes: demo.md
+
+plugins:
+  - techdocs-core
