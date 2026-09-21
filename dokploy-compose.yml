@@ -31,7 +31,8 @@ services:
             credentials: true
           database:
             client: better-sqlite3
-            connection: /data/backstage.db
+            connection:
+              directory: /data
         auth:
           providers:
             guest:
