@@ -1,0 +1,22 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  title: ${{ values.title }}
+  description: ${{ values.description }}
+  tags:
+    - flylo
+    - frontend
+    - scaffolded
+  annotations:
+    github.com/project-slug: ${{ values.repoOwner }}/${{ values.name }}
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - url: ${{ values.websiteUrl }}
+      title: Live site
+      icon: catalog
+spec:
+  type: website
+  lifecycle: experimental
+  owner: ${{ values.owner }}
+  system: system:default/flylo-air

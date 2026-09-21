@@ -400,6 +400,211 @@ services:
           owner: group:flylo/ops
           system: system:default/flylo-air
         CATEOF
+        cat > /tmp/catalog/templates.yaml <<'CATEOF'
+        apiVersion: scaffolder.backstage.io/v1beta3
+        kind: Template
+        metadata:
+          name: flylo-frontend
+          title: FlyLo Frontend Website
+          description: >
+            Scaffold a new FlyLo Air marketing/frontend website component (catalog-info,
+            README, TechDocs stub) owned by Platform — same shape as FlyLo Web.
+          tags:
+            - flylo
+            - frontend
+            - recommended
+          links:
+            - url: https://www.flylo-air.com/
+              title: FlyLo Air
+              icon: catalog
+        spec:
+          owner: group:flylo/platform
+          type: website
+          parameters:
+            - title: Component details
+              required:
+                - name
+                - title
+                - owner
+              properties:
+                name:
+                  title: Name
+                  type: string
+                  description: Component and repo name (kebab-case)
+                  pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+                  ui:autofocus: true
+                title:
+                  title: Title
+                  type: string
+                  description: Human-friendly display title
+                  default: New FlyLo Site
+                description:
+                  title: Description
+                  type: string
+                  description: Short description shown in the catalog
+                  default: FlyLo Air frontend experience
+                  ui:widget: textarea
+                websiteUrl:
+                  title: Live website URL
+                  type: string
+                  default: https://www.flylo-air.com/
+                owner:
+                  title: Owner
+                  type: string
+                  description: Group that owns this component
+                  default: group:flylo/platform
+                  ui:field: OwnerPicker
+                  ui:options:
+                    allowedKinds:
+                      - Group
+                repoOwner:
+                  title: GitHub org/user
+                  type: string
+                  default: voxic
+                  description: Where the repo would live (demo; publish step is dry-run)
+          steps:
+            - id: fetch
+              name: Fetch frontend skeleton
+              action: fetch:template
+              input:
+                url: file:/tmp/skeletons/flylo-frontend
+                values:
+                  name: ${{ parameters.name }}
+                  title: ${{ parameters.title }}
+                  description: ${{ parameters.description }}
+                  websiteUrl: ${{ parameters.websiteUrl }}
+                  owner: ${{ parameters.owner }}
+                  repoOwner: ${{ parameters.repoOwner }}
+            - id: summarize
+              name: Demo summary
+              action: debug:log
+              input:
+                message: >
+                  Scaffolded ${{ parameters.name }} for FlyLo Air.
+                  In production this would publish to github.com/${{ parameters.repoOwner }}/${{ parameters.name }}
+                  and register catalog-info.yaml. Workspace files are ready in the template dry-run.
+          output:
+            text:
+              - title: Next steps
+                content: |
+                  Created skeleton for **${{ parameters.name }}** (${{ parameters.title }}).
+                  Wire `publish:github` + GitHub integration when you want real repos from Create.
+        ---
+        apiVersion: scaffolder.backstage.io/v1beta3
+        kind: Template
+        metadata:
+          name: flylo-service
+          title: FlyLo Backend Service
+          description: >
+            Scaffold a FlyLo Air backend service with Component + OpenAPI API entities —
+            same pattern as booking-backend / booking-api.
+          tags:
+            - flylo
+            - backend
+            - api
+          links:
+            - url: https://backstage.progress42.com/catalog/default/api/booking-api
+              title: Example booking-api
+        spec:
+          owner: group:flylo/platform
+          type: service
+          parameters:
+            - title: Service details
+              required:
+                - name
+                - title
+                - owner
+              properties:
+                name:
+                  title: Service name
+                  type: string
+                  description: Kebab-case service name
+                  pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+                  ui:autofocus: true
+                title:
+                  title: Title
+                  type: string
+                  default: New FlyLo Service
+                description:
+                  title: Description
+                  type: string
+                  default: FlyLo Air backend service
+                  ui:widget: textarea
+                owner:
+                  title: Owner
+                  type: string
+                  default: group:flylo/platform
+                  ui:field: OwnerPicker
+                  ui:options:
+                    allowedKinds:
+                      - Group
+                repoOwner:
+                  title: GitHub org/user
+                  type: string
+                  default: voxic
+          steps:
+            - id: fetch
+              name: Fetch service skeleton
+              action: fetch:template
+              input:
+                url: file:/tmp/skeletons/flylo-service
+                values:
+                  name: ${{ parameters.name }}
+                  title: ${{ parameters.title }}
+                  description: ${{ parameters.description }}
+                  owner: ${{ parameters.owner }}
+                  repoOwner: ${{ parameters.repoOwner }}
+            - id: summarize
+              name: Demo summary
+              action: debug:log
+              input:
+                message: >
+                  Scaffolded service ${{ parameters.name }} with API ${{ parameters.name }}-api.
+          output:
+            text:
+              - title: Next steps
+                content: |
+                  Skeleton ready for **${{ parameters.name }}** including `${{ parameters.name }}-api`.
+        ---
+        apiVersion: scaffolder.backstage.io/v1beta3
+        kind: Template
+        metadata:
+          name: flylo-register-component
+          title: Register existing FlyLo component
+          description: >
+            Register an existing repo into the FlyLo catalog by pointing at a public
+            catalog-info.yaml URL (raw GitHub works for public repos).
+          tags:
+            - flylo
+            - catalog
+          links:
+            - url: https://backstage.io/docs/features/software-catalog/descriptor-format
+              title: Descriptor format
+        spec:
+          owner: group:flylo/platform
+          type: registration
+          parameters:
+            - title: Catalog location
+              required:
+                - catalogInfoUrl
+              properties:
+                catalogInfoUrl:
+                  title: catalog-info.yaml URL
+                  type: string
+                  description: Absolute URL to a Backstage entity YAML (e.g. raw.githubusercontent.com/...)
+                  ui:autofocus: true
+          steps:
+            - id: register
+              name: Register in catalog
+              action: catalog:register
+              input:
+                catalogInfoUrl: ${{ parameters.catalogInfoUrl }}
+          output:
+            links:
+              - title: Open in catalog
+                icon: catalog
+                entityRef: ${{ steps.register.output.entityRef }}
+        CATEOF
         mkdir -p /tmp/docs/flylo-web/docs /tmp/techdocs-publish/default/component/web
         cat > /tmp/docs/flylo-web/mkdocs.yml <<'DOCSEOF_mkdocs_yml'
         site_name: FlyLo Web
@@ -476,7 +681,7 @@ services:
               dangerouslyAllowOutsideDevelopment: true
         catalog:
           rules:
-            - allow: [Component, System, API, Resource, Location, User, Group, Domain]
+            - allow: [Component, System, API, Resource, Location, User, Group, Domain, Template]
           locations:
             - type: file
               target: /tmp/catalog/org.yaml
@@ -494,6 +699,10 @@ services:
               target: /tmp/catalog/components.yaml
               rules:
                 - allow: [Component]
+            - type: file
+              target: /tmp/catalog/templates.yaml
+              rules:
+                - allow: [Template]
         techdocs:
           builder: external
           publisher:
